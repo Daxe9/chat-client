@@ -19,22 +19,26 @@ public class ClientHandler extends Thread {
         out = new DataOutputStream(connection.getOutputStream());
     }
 
-    private void nicknameHandler() throws IOException {
+    private void nicknameHandler() throws Exception {
         String msg = sr.getMessage();
         if (msg.equals("name")) {
             System.out.println("Inserisci il nickname: ");
             String nickname = scan.nextLine();
             this.nickname = nickname;
             out.writeBytes("nickname," + nickname + "\n");
+            Thread.sleep(5);
+            if (sr.getMessage().equals("n")) {
+                // TODO
+            }
         }
     }
 
     private void rules() {
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
+        System.out.println("-------------------");
+        System.out.println("@all messaggio");
+        System.out.println("@nickname messaggio");
+        System.out.println("@close");
+        System.out.println("-------------------");
     }
 
     /*
@@ -51,10 +55,10 @@ public class ClientHandler extends Thread {
      */
     public void run() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(100);
             nicknameHandler();
             System.out.println("Benvenutə, " + nickname + "!");
-            // rules();
+            rules();
 
             while (true) {
                 String userInput = scan.nextLine();
@@ -66,17 +70,28 @@ public class ClientHandler extends Thread {
                 }
 
                 switch (cmd) {
-                    case "@all":
+                    case "@all": {
                         out.writeBytes("all," + originalMessage + "\n");
+                        Thread.sleep(500);
+                        String result = sr.getMessage();
+                        if (result.equals("n")) {
+                            System.out.println("Server a puttane.");
+                        }
                         break;
-
+                    }
                     case "@quit":
 
                         break;
-                    default:
+                    default: {
                         String targetNickname = cmd.substring(1);
                         out.writeBytes(targetNickname + "," + originalMessage + "\n"); 
+                        Thread.sleep(500);
+                        String result = sr.getMessage();
+                        if (result.equals("n")) {
+                            System.out.println("L'utente e' andato a puttane, non e' raggiungibile."); 
+                        }
                         break;
+                    }
                 }
             }
         } catch (Exception e) {

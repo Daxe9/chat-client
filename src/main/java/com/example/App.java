@@ -19,9 +19,18 @@ public class App {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             while (true) {
                 String serverResponse = in.readLine();
-                System.out.println("[LOG]: " + serverResponse);
+                if (serverResponse == null) {
+                    System.exit(1);
+                }
+                if (serverResponse.contains(",")) {
+                    String[] serverResponseSplit = serverResponse.split(",");
+                    String originalMessage = "";
+                    for (int i = 1; i < serverResponseSplit.length; i++) {
+                        originalMessage += serverResponseSplit[i] + ",";
+                    }
+                    System.out.println("[" + serverResponseSplit[0] + "]: " + originalMessage);
+                }
                 sr.setMessage(serverResponse);
-                // TODO: handler upcoming message
             }
 
             /*
@@ -29,7 +38,7 @@ public class App {
              * e questa siepe che,
              * da tanta parte dell'ultimo orizzontre il guardo esclude. ma sedendo e mirando
              * interminati spazi e sovrumani silenzi e profondissima quiete io nel pensier
-             * mi fuggo ove per poco il cor non si spaura
+             * mi fingo ove per poco il cor non si spaura
              */
 
         } catch (Exception e) {
