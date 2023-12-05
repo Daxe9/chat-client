@@ -16,20 +16,26 @@ public class App {
             ClientHandler ch = new ClientHandler(connection, sr);
             ch.start();
 
+            // il main thread rimane in ascolto di message in arrivo
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             while (true) {
                 String serverResponse = in.readLine();
+                System.out.println("[INFO]: " + serverResponse);
+                // controlla se il socket e' stato terminato dal server
                 if (serverResponse == null) {
                     System.exit(1);
                 }
+
+                // controlla se la risposta ricevuto sia effettivamente un message da parte di altri client
                 if (serverResponse.contains(",")) {
                     String[] serverResponseSplit = serverResponse.split(",");
-                    String originalMessage = "";
-                    for (int i = 1; i < serverResponseSplit.length; i++) {
-                        originalMessage += serverResponseSplit[i] + ",";
-                    }
+
+                    // trova la posizione della prima virgola, e trova il contenuto del message facendo un substring di index + 1
+                    int firstCommaIndex = serverResponse.indexOf(",");
+                    String originalMessage = serverResponse.substring(firstCommaIndex + 1);
                     System.out.println("[" + serverResponseSplit[0] + "]: " + originalMessage);
                 }
+                // immagazzina la risposta ricevuta dal server
                 sr.setMessage(serverResponse);
             }
 
@@ -42,6 +48,7 @@ public class App {
              */
 
         } catch (Exception e) {
+            System.out.println(1);
             System.err.println(e.getMessage());
             System.exit(1);
 

@@ -20,6 +20,7 @@ public class ClientHandler extends Thread {
     }
 
     private void nicknameHandler() throws Exception {
+        Thread.sleep(100);
         String msg = sr.getMessage();
         if (msg.equals("name")) {
             System.out.println("Inserisci il nickname: ");
@@ -49,13 +50,9 @@ public class ClientHandler extends Thread {
     /*
      * TODO:
      * controllo su un nickname gia' esistente
-     * comunicare p2p
-     * comunicare in broadcast
-     * 
      */
     public void run() {
         try {
-            Thread.sleep(100);
             nicknameHandler();
             System.out.println("Benvenutə, " + nickname + "!");
             rules();
@@ -95,6 +92,7 @@ public class ClientHandler extends Thread {
                 }
             }
         } catch (Exception e) {
+            System.out.println(2);
             System.err.println(e.getMessage());
             System.exit(1);
         }
