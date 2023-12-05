@@ -20,7 +20,6 @@ public class App {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             while (true) {
                 String serverResponse = in.readLine();
-                System.out.println("[INFO]: " + serverResponse);
                 // controlla se il socket e' stato terminato dal server
                 if (serverResponse == null) {
                     System.exit(1);
@@ -34,9 +33,10 @@ public class App {
                     int firstCommaIndex = serverResponse.indexOf(",");
                     String originalMessage = serverResponse.substring(firstCommaIndex + 1);
                     System.out.println("[" + serverResponseSplit[0] + "]: " + originalMessage);
+                } else {
+                    // immagazzina la risposta ricevuta dal server
+                    sr.setMessage(serverResponse);
                 }
-                // immagazzina la risposta ricevuta dal server
-                sr.setMessage(serverResponse);
             }
 
             /*
@@ -48,7 +48,6 @@ public class App {
              */
 
         } catch (Exception e) {
-            System.out.println(1);
             System.err.println(e.getMessage());
             System.exit(1);
 

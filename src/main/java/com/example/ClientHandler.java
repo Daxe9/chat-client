@@ -20,6 +20,7 @@ public class ClientHandler extends Thread {
     }
 
     private void nicknameHandler() throws Exception {
+        // aspetta l'invio del messaggio da parte del server
         Thread.sleep(100);
         String msg = sr.getMessage();
         if (msg.equals("name")) {
@@ -27,9 +28,12 @@ public class ClientHandler extends Thread {
             String nickname = scan.nextLine();
             this.nickname = nickname;
             out.writeBytes("nickname," + nickname + "\n");
-            Thread.sleep(5);
+            Thread.sleep(50);
+            
+            // se la risposta del server e' n, significa che il nickname esiste di gia'
             if (sr.getMessage().equals("n")) {
-                // TODO
+                System.out.println("Il nome esiste di gia'...");
+                nicknameHandler();
             }
         }
     }
@@ -38,22 +42,16 @@ public class ClientHandler extends Thread {
         System.out.println("-------------------");
         System.out.println("@all messaggio");
         System.out.println("@nickname messaggio");
-        System.out.println("@close");
+        System.out.println("@quit");
         System.out.println("-------------------");
     }
 
-    /*
-     * @all ciao a tutti
-     * 
-     * @pippo ciao pippo
-     */
-    /*
-     * TODO:
-     * controllo su un nickname gia' esistente
-     */
     public void run() {
         try {
+            // obbliga all'utente di inserire prima il nickname
             nicknameHandler();
+            
+            // stampe regoali
             System.out.println("Benvenutə, " + nickname + "!");
             rules();
 
@@ -61,6 +59,8 @@ public class ClientHandler extends Thread {
                 String userInput = scan.nextLine();
                 String[] userInputSplit = userInput.split(" ");
                 String cmd = userInputSplit[0].trim();
+                
+                // ricostruisce il messaggio originale
                 String originalMessage = "";
                 for (int i = 1; i < userInputSplit.length; i++) {
                     originalMessage += userInputSplit[i] + " ";
@@ -69,6 +69,7 @@ public class ClientHandler extends Thread {
                 switch (cmd) {
                     case "@all": {
                         out.writeBytes("all," + originalMessage + "\n");
+                        // aspetta la risposta del server
                         Thread.sleep(500);
                         String result = sr.getMessage();
                         if (result.equals("n")) {
@@ -77,13 +78,20 @@ public class ClientHandler extends Thread {
                         break;
                     }
                     case "@quit":
-
-                        break;
+                        out.writeBytes("quit\n");
+                        System.out.println("Arrivederci!");
+                        Thread.sleep(100);
+                        System.exit(0);
                     default: {
+                        // toglie la chiocciola
                         String targetNickname = cmd.substring(1);
                         out.writeBytes(targetNickname + "," + originalMessage + "\n"); 
+                        // aspetta la risposta del server
                         Thread.sleep(500);
+                        
+                        // prende la risposta del server
                         String result = sr.getMessage();
+                        // se e' n, vale a dire che non esiste un utente con tale nickname
                         if (result.equals("n")) {
                             System.out.println("L'utente e' andato a puttane, non e' raggiungibile."); 
                         }
@@ -92,7 +100,6 @@ public class ClientHandler extends Thread {
                 }
             }
         } catch (Exception e) {
-            System.out.println(2);
             System.err.println(e.getMessage());
             System.exit(1);
         }
